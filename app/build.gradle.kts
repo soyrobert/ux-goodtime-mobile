@@ -66,4 +66,23 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    implementation("androidx.core:core-ktx:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("com.google.android.material:material:1.4.0")
+
+    // Jetpack Compose
+    implementation("androidx.compose.ui:ui:1.0.1")
+    implementation("androidx.compose.material:material:1.0.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.0.1")
+
+    // Navigation component for Compose
+    implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
+
+    // Optional - For testing Compose
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.1")
+
+    debugImplementation("androidx.compose.ui:ui-tooling:1.0.1")
+
 }
