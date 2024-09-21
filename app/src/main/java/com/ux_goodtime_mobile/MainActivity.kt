@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,9 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,7 +46,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
@@ -52,7 +56,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import java.time.format.TextStyle
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -67,7 +70,8 @@ class MainActivity : ComponentActivity() {
                 }){
                     NavHost(navController = navController, startDestination = "home") {
                         composable("home") { HomeScreen(navController) }
-                        composable("createAlarm") { CreateAlarmScreen() }
+                        composable("createAlarm") { CreateAlarmScreen(navController) }
+                        composable("listOfAlarms") { AlarmScreen() }
                     }
                 }
             }
@@ -83,7 +87,7 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
         contentColor = Color.White           // Color del contenido (íconos y texto)
     ){
         BottomNavigationItem(
-            icon = { Icon(androidx.compose.material.icons.Icons.Default.Settings, contentDescription = "Configuración") },
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Configuración") },
             label = { Text("Configuración") },
             selected = false,
             onClick = { /* Acción de navegación */ },
@@ -91,7 +95,7 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
             unselectedContentColor = Color.LightGray
         )
         BottomNavigationItem(
-            icon = { Icon(androidx.compose.material.icons.Icons.Default.Notifications, contentDescription = "Estadísticas") },
+            icon = { Icon(Icons.Default.Notifications, contentDescription = "Estadísticas") },
             label = { Text("Estadísticas") },
             selected = false,
             onClick = { /* Acción de navegación */ },
@@ -99,11 +103,11 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
             unselectedContentColor = Color.LightGray
         )
         BottomNavigationItem(
-            icon = { Icon(androidx.compose.material.icons.Icons.Default.Add, contentDescription = "Alarmas") },
+            icon = { Icon(Icons.Default.Add, contentDescription = "Alarmas") },
             label = { Text("Alarmas") },
             selected = true, // Marca la opción actual como seleccionada
             onClick = {
-                navController.navigate("createAlarm")
+                navController.navigate("listOfAlarms")
             },
             selectedContentColor = Color.White,
             unselectedContentColor = Color.LightGray
@@ -215,7 +219,7 @@ fun AddAlarmButton(navController: androidx.navigation.NavHostController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF006769) // Color de fondo (#006769)
             ),
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(100.dp)  // Esquinas redondeadas
+            shape = RoundedCornerShape(100.dp)  // Esquinas redondeadas
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -232,7 +236,7 @@ fun AddAlarmButton(navController: androidx.navigation.NavHostController) {
 }
 
 @Composable
-fun CreateAlarmScreen() {
+fun CreateAlarmScreen(navController: androidx.navigation.NavHostController) {
     // Aquí puedes agregar el diseño de la pantalla de alarmas
 
     Column(
@@ -290,7 +294,7 @@ fun CreateAlarmScreen() {
                     AlarmNameWithPhotoButton()
                 }
                 Row {
-                    AlarmOptions()
+                    AlarmOptions(navController)
                 }
             }
 
@@ -427,7 +431,7 @@ fun AlarmNameWithPhotoButton() {
 
 
 @Composable
-fun AlarmOptions() {
+fun AlarmOptions(navController: androidx.navigation.NavHostController) {
     // Estados para los checkboxes
     var vibrateChecked by remember { mutableStateOf(false) }
     var repeatChecked by remember { mutableStateOf(false) }
@@ -527,7 +531,9 @@ fun AlarmOptions() {
             }
 
             Button(
-                onClick = { /* Acción al presionar Guardar */ },
+                onClick = {
+                    navController.navigate("listOfAlarms")
+                },
                 colors = ButtonDefaults.run {
                     val buttonColors = buttonColors(Color(0xFF006769))
                     buttonColors
@@ -542,5 +548,114 @@ fun AlarmOptions() {
             }
         }
 
+    }
+}
+
+
+@Composable
+fun AlarmScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp) // Padding general
+    ) {
+        Spacer(modifier = Modifier.height(30.dp)) // Espacio superior
+        Text(
+            text = "Tus alarmas",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp) // Espacio inferior del título
+        )
+        AlarmList()
+    }
+}
+
+@Composable
+fun AlarmList() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        AlarmItem(
+            imageRes = R.drawable.image1, // Reemplazar por la imagen correcta
+            title = "Despertar",
+            time = "06:00 AM"
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        AlarmItem(
+            imageRes = R.drawable.image2, // Reemplazar por la imagen correcta
+            title = "Preparar almuerzo",
+            time = "11:00 AM"
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        AlarmItem(
+            imageRes = R.drawable.image3, // Reemplazar por la imagen correcta
+            title = "Recoger a Felipe del jardín",
+            time = "02:00 PM"
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        AlarmItem(
+            imageRes = R.drawable.image4, // Reemplazar por la imagen correcta
+            title = "Reunión de proyecto",
+            time = "03:30 PM"
+        )
+    }
+}
+
+@Composable
+fun AlarmItem(imageRes: Int, title: String, time: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = time,
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    TextButton(onClick = { /* Acción compartir */ }) {
+                        Text(text = "Compartir", fontSize = 12.sp)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = { /* Acción editar */ }) {
+                        Text(text = "Editar", fontSize = 12.sp)
+                    }
+                }
+            }
+            IconButton(onClick = { /* Acción de ir a más detalles */ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right), // Reemplazar con el icono correcto
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp) // Tamaño del icono ajustado
+                )
+            }
+        }
     }
 }
