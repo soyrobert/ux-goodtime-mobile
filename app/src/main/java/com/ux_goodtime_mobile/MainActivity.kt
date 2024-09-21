@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,9 +20,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Checkbox
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.RadioButton
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -28,13 +40,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import java.time.format.TextStyle
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -101,17 +119,6 @@ fun HomeScreen(navController: androidx.navigation.NavHostController) {
     AddAlarmButton(navController)
 }
 
-@Composable
-fun CreateAlarmScreen() {
-    // Aquí puedes agregar el diseño de la pantalla de alarmas
-    Spacer(modifier = Modifier.height(30.dp))
-    Text(
-        text = "Crear Alarma!",
-        fontSize = 36.sp,
-        fontWeight = FontWeight.Normal,
-        textAlign = TextAlign.Center
-    )
-}
 
 // ***********************************************************
 // Logo
@@ -221,5 +228,319 @@ fun AddAlarmButton(navController: androidx.navigation.NavHostController) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun CreateAlarmScreen() {
+    // Aquí puedes agregar el diseño de la pantalla de alarmas
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp), // Añadido padding a la columna principal
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+
+        // Sección: Título y configuración de hora
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp), // Padding para las secciones internas
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = "Hora de alarma",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF424242)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Añadir componentes como TextFields o controles de hora aquí más tarde
+                Column {
+                    Row {
+                        SquareTextField()
+                        Column {
+                            Text(text = ":",
+                                fontSize = 36.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .wrapContentHeight(Alignment.CenterVertically))
+
+                        }
+                        SquareTextField()
+                    }
+                }
+                Column {
+                    AmPmRadioButtons()
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Column {
+                Row {
+                    AlarmNameWithPhotoButton()
+                }
+                Row {
+                    AlarmOptions()
+                }
+            }
+
+        }
+    }
+
+}
+
+@Composable
+fun SquareTextField() {
+    val textState = remember { mutableStateOf(TextFieldValue("00")) }
+
+    Box(
+        modifier = Modifier
+            .size(width = 81.dp, height = 85.dp) // Tamaño del cuadrado
+            .border(1.dp, Color.Gray) // Borde opcional para visualizar el cuadrado
+            .padding(8.dp),
+        contentAlignment = Alignment.Center // Centramos el contenido
+    ) {
+        BasicTextField(
+            value = textState.value,
+            onValueChange = { newText ->
+                // Validamos si la longitud es 2 para mantener solo 2 caracteres como "00"
+                if (newText.text.length <= 2) {
+                    textState.value = newText
+                }
+            },
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 36.sp, // Tamaño de la fuente
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            ),
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentHeight(Alignment.CenterVertically)
+        )
+    }
+}
+
+@Composable
+fun AmPmRadioButtons() {
+    var selectedOption by remember { mutableStateOf("AM") } // Inicialmente "AM" seleccionado
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp), // Padding alrededor de la columna
+        horizontalAlignment = Alignment.Start // Alinea los elementos a la izquierda
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = (selectedOption == "AM"),
+                onClick = {
+                    selectedOption = "AM"
+                }
+            )
+            Text(
+                text = "AM",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 8.dp) // Espaciado entre RadioButton y texto
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp)) // Espacio entre AM y PM
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = (selectedOption == "PM"),
+                onClick = {
+                    selectedOption = "PM"
+                }
+            )
+            Text(
+                text = "PM",
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 8.dp) // Espaciado entre RadioButton y texto
+            )
+        }
+    }
+}
+
+
+@Composable
+fun AlarmNameWithPhotoButton() {
+    var textState by remember { mutableStateOf(TextFieldValue("")) } // Estado del campo de texto
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        // Campo de texto con placeholder
+        OutlinedTextField(
+            value = textState,
+            onValueChange = { textState = it },
+            modifier = Modifier
+                .fillMaxWidth(),
+            placeholder = {
+                Text("Nombre de la alarma", color = Color.Gray)
+            },
+            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 18.sp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF006769), // Color del borde cuando está enfocado
+                unfocusedBorderColor = Color(0xFF006769) // Color del borde cuando no está enfocado
+            )
+        )
+
+        // Texto pequeño debajo del campo de texto
+        Text(
+            text = "Ingresa un nombre que puedas recordar",
+            fontSize = 12.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(top = 4.dp) // Espacio pequeño entre el campo de texto y la ayuda
+        )
+
+        // Botón de seleccionar foto, alineado a la izquierda
+        Button(
+            onClick = { /* Acción para seleccionar foto */ },
+            modifier = Modifier
+                .align(Alignment.Start) // Alineado a la izquierda
+                .padding(top = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF006769) // Color de fondo (#006769)
+            ),// Espacio pequeño entre el texto y el botón
+        ) {
+            Text("Seleccionar foto")
+        }
+    }
+}
+
+
+@Composable
+fun AlarmOptions() {
+    // Estados para los checkboxes
+    var vibrateChecked by remember { mutableStateOf(false) }
+    var repeatChecked by remember { mutableStateOf(false) }
+    var description by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        // Checkbox para Vibrar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 1.dp), // Espacio entre los checkboxes
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start // Alinea a la izquierda
+        ) {
+            Checkbox(
+                checked = vibrateChecked,
+                onCheckedChange = { vibrateChecked = it }
+            )
+            Text(text = "Vibrar", fontSize = 18.sp)
+        }
+
+        // Checkbox para Repetir
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 1.dp), // Espacio entre los checkboxes
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start // Alinea a la izquierda
+        ) {
+            Checkbox(
+                checked = repeatChecked,
+                onCheckedChange = { repeatChecked = it }
+            )
+            Text(text = "Repetir", fontSize = 18.sp)
+        }
+        // Botón Seleccionar
+        Button(
+            onClick = { /* Acción al presionar el botón */ },
+            modifier = Modifier.align(Alignment.Start),
+            colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF006769) // Color de fondo (#006769)
+            ),
+        ) {
+            Text(text = "Seleccionar (Clasic)")
+        }
+        // Texto pequeño debajo del campo de texto
+        Text(
+            text = "Selecciona tu sonido favorito",
+            fontSize = 12.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(top = 4.dp) // Espacio pequeño entre el campo de texto y la ayuda
+        )
+
+        // Campo de texto para descripción
+        Column(modifier = Modifier.fillMaxWidth()) {
+            BasicTextField(
+                value = description,
+                onValueChange = { description = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(BorderStroke(1.dp, Color(0xFF006769)), RoundedCornerShape(8.dp))
+                    .padding(16.dp),
+                singleLine = true,
+
+            )
+            Text(
+                text = "La descripción le ayudará a recordar mejor el propósito de la alarma.",
+                fontSize = 12.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 16.dp, top = 2.dp)
+            )
+        }
+
+        // Botones Salir y Guardar
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = { /* Acción al presionar Salir */ },
+                colors = ButtonDefaults.run { val buttonColors =
+                    buttonColors(Color(0xFF66BB6A))
+                    buttonColors
+                }, // Verde claro
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 8.dp),
+                shape = RoundedCornerShape(50) // Esquinas redondeadas
+            ) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Salir")
+                Text(text = " Salir", color = Color.White)
+            }
+
+            Button(
+                onClick = { /* Acción al presionar Guardar */ },
+                colors = ButtonDefaults.run {
+                    val buttonColors = buttonColors(Color(0xFF006769))
+                    buttonColors
+                }, // Color específico
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 8.dp),
+                shape = RoundedCornerShape(50) // Esquinas redondeadas
+            ) {
+                Icon(imageVector = Icons.Filled.Check, contentDescription = "Guardar")
+                Text(text = " Guardar", color = Color.White)
+            }
+        }
+
     }
 }
