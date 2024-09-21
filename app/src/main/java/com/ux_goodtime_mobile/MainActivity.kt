@@ -1,5 +1,6 @@
 package com.ux_goodtime_mobile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,24 +17,100 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CenteredImageScreen()
-            WelcomeText()
-            AddAlarmButton()
+            MaterialTheme {
+                val navController = rememberNavController()
+                Scaffold (bottomBar = {
+                    BottomNavigationBar(navController)
+                }){
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") { HomeScreen(navController) }
+                        composable("createAlarm") { CreateAlarmScreen() }
+                    }
+                }
+            }
         }
     }
+}
+
+@Composable
+fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
+
+    BottomNavigation (
+        backgroundColor = Color(0xFF006769), // Color de fondo personalizado (verde oscuro)
+        contentColor = Color.White           // Color del contenido (íconos y texto)
+    ){
+        BottomNavigationItem(
+            icon = { Icon(androidx.compose.material.icons.Icons.Default.Settings, contentDescription = "Configuración") },
+            label = { Text("Configuración") },
+            selected = false,
+            onClick = { /* Acción de navegación */ },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.LightGray
+        )
+        BottomNavigationItem(
+            icon = { Icon(androidx.compose.material.icons.Icons.Default.Notifications, contentDescription = "Estadísticas") },
+            label = { Text("Estadísticas") },
+            selected = false,
+            onClick = { /* Acción de navegación */ },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.LightGray
+        )
+        BottomNavigationItem(
+            icon = { Icon(androidx.compose.material.icons.Icons.Default.Add, contentDescription = "Alarmas") },
+            label = { Text("Alarmas") },
+            selected = true, // Marca la opción actual como seleccionada
+            onClick = {
+                navController.navigate("createAlarm")
+            },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.LightGray
+        )
+    }
+}
+
+
+@Composable
+fun HomeScreen(navController: androidx.navigation.NavHostController) {
+    CenteredImageScreen()
+    WelcomeText()
+    AddAlarmButton(navController)
+}
+
+@Composable
+fun CreateAlarmScreen() {
+    // Aquí puedes agregar el diseño de la pantalla de alarmas
+    Spacer(modifier = Modifier.height(30.dp))
+    Text(
+        text = "Crear Alarma!",
+        fontSize = 36.sp,
+        fontWeight = FontWeight.Normal,
+        textAlign = TextAlign.Center
+    )
 }
 
 // ***********************************************************
@@ -79,8 +156,15 @@ fun WelcomeText() {
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Te damos la\nbienvenida a\nGoodTime",
+            text = "Te damos la",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Normal,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "bienvenida a\n\nGoodTime",
             fontSize = 36.sp,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center
@@ -108,7 +192,7 @@ fun PreviewWelcomeText() {
 // Add alarm button
 // ***********************************************************
 @Composable
-fun AddAlarmButton() {
+fun AddAlarmButton(navController: androidx.navigation.NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -117,7 +201,7 @@ fun AddAlarmButton() {
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
-            onClick = { /* Acción al hacer clic */ },
+            onClick = { navController.navigate("createAlarm") },
             modifier = Modifier
                 .width(214.dp)  // Ajusta el ancho según necesites
                 .height(69.dp), // Ajusta la altura según lo desees
@@ -138,10 +222,4 @@ fun AddAlarmButton() {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewAddAlarmButton() {
-    AddAlarmButton()
 }
