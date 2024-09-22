@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Card
@@ -42,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -107,7 +110,7 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
             label = { Text("Alarmas") },
             selected = true, // Marca la opción actual como seleccionada
             onClick = {
-                navController.navigate("listOfAlarms")
+                navController.navigate("createAlarm")
             },
             selectedContentColor = Color.White,
             unselectedContentColor = Color.LightGray
@@ -329,7 +332,7 @@ fun SquareTextField() {
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentHeight(Alignment.CenterVertically),
         )
     }
 }
@@ -437,6 +440,8 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
     var repeatChecked by remember { mutableStateOf(false) }
     var description by remember { mutableStateOf("") }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -517,7 +522,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
         ) {
             Button(
                 onClick = {
-                    navController.navigate("listOfAlarms")
+                    navController.navigate("home")
                 },
                 colors = ButtonDefaults.run { val buttonColors =
                     buttonColors(Color(0xFF66BB6A))
@@ -534,7 +539,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
 
             Button(
                 onClick = {
-                    navController.navigate("listOfAlarms")
+                          showDialog = true
                 },
                 colors = ButtonDefaults.run {
                     val buttonColors = buttonColors(Color(0xFF006769))
@@ -548,6 +553,36 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
                 Icon(imageVector = Icons.Filled.Check, contentDescription = "Guardar")
                 Text(text = " Guardar", color = Color.White)
             }
+
+
+            // Muestra el Popup si showDialog es true
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = {
+                        Text(
+                            "",
+                            color = Color(0xFF006769)
+                        )
+                            },
+                    text = {
+                        Text(
+                            text = "Alarma Agregada.",
+                            color = Color(0xFF006769),
+                            fontSize = 20.sp
+                        )},
+                    confirmButton = {}
+                )
+
+                // Esto es para cerrar el popup automaticamente.
+                LaunchedEffect(Unit) {
+                    delay(2000)
+                    showDialog = false
+                    navController.navigate("listOfAlarms")
+                }
+
+            }
+
         }
 
     }
