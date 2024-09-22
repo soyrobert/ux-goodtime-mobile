@@ -516,7 +516,9 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { /* Acción al presionar Salir */ },
+                onClick = {
+                    navController.navigate("listOfAlarms")
+                },
                 colors = ButtonDefaults.run { val buttonColors =
                     buttonColors(Color(0xFF66BB6A))
                     buttonColors
