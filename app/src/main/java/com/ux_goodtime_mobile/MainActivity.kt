@@ -64,6 +64,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 
 
@@ -84,6 +85,7 @@ class MainActivity : ComponentActivity() {
                         composable("listOfAlarms") { AlarmScreen(navController) }
                         composable("alarmDetail") { AlarmDetailScreen() }
                         composable("historyStatistics") { HistoryStatisticsScreen(navController) }
+                        composable("statistics") { StatisticsScreen(navController) }
                     }
                 }
             }
@@ -936,7 +938,8 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
                         )
                     }
                 },
-                backgroundColor = Color(0xFF006769) // Color personalizado de la barra superior
+                backgroundColor = Color(0xFF006769),
+                modifier = Modifier.height(72.dp)
             )
         }
     ) { paddingValues ->
@@ -944,8 +947,8 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp), // Añade un padding para los componentes internos
-            verticalArrangement = Arrangement.SpaceBetween // Posiciona los componentes, dejando espacio entre ellos
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 // History Button
@@ -956,7 +959,7 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
                         .padding(vertical = 8.dp)
                         .height(60.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF006769) // Color de fondo
+                        containerColor = Color(0xFF006769)
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -980,13 +983,13 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
 
                 // Statistics Button
                 Button(
-                    onClick = { /* Acción para navegar a las estadísticas */ },
+                    onClick = { navController.navigate("statistics") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .height(60.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF006769) // Color de fondo
+                        containerColor = Color(0xFF006769)
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -1014,24 +1017,192 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
                 onClick = { navController.navigateUp() },
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
-                    .align(Alignment.CenterHorizontally) // Alinea el botón al centro horizontal
+                    .align(Alignment.CenterHorizontally)
                     .padding(vertical = 24.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF006769)
                 ),
-                shape = RoundedCornerShape(50) // Esquinas redondeadas
+                shape = RoundedCornerShape(50)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack, // Icono de flecha atrás
+                    imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Cancelar",
                     tint = Color.White
                 )
-                Spacer(modifier = Modifier.width(8.dp)) // Espacio entre el icono y el texto
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Cancelar",
                     fontSize = 16.sp,
                     color = Color.White
                 )
+            }
+        }
+    }
+}
+
+// ***********************************************************
+// Diseño pantalla estadisticas
+// ***********************************************************
+
+@Composable
+fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Estadísticas",
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Regresar",
+                            tint = Color.White
+                        )
+                    }
+                },
+                backgroundColor = Color(0xFF006769),
+                modifier = Modifier.height(72.dp)
+            )
+        },
+        bottomBar = {
+
+            BottomNavigation {
+                BottomNavigationItem(
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Configuración") },
+                    label = { Text("Configuración") },
+                    selected = false,
+                    onClick = { /* Acción */ }
+                )
+                BottomNavigationItem(
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Estadísticas") },
+                    label = { Text("Estadísticas") },
+                    selected = true,
+                    onClick = { /* Acción */ }
+                )
+                BottomNavigationItem(
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Alarmas") },
+                    label = { Text("Alarmas") },
+                    selected = false,
+                    onClick = { /* Acción */ }
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Texto para Horas pico de alarmas
+                Text(
+                    text = "Horas pico de alarmas",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // Imagen para las horas pico de alarmas
+                Image(
+                    painter = painterResource(id = R.drawable.cantidad_alarmas),
+                    contentDescription = "Horas pico de alarmas",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Texto para Porcentaje de alarmas que se posponen
+                Text(
+                    text = "Porcentaje de alarmas que se posponen",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // Imagen para el porcentaje de alarmas que se posponen
+                Image(
+                    painter = painterResource(id = R.drawable.porcentaje),
+                    contentDescription = "Porcentaje de alarmas que se posponen",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            // Botones en la parte inferior de la pantalla
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Botón de Salir
+                Button(
+                    onClick = { navController.navigateUp() },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006769)
+                    ),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Salir",
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Salir",
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Botón de Reiniciar
+                Button(
+                    onClick = { /* Acción para reiniciar las estadísticas */ },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006769)
+                    ),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Reiniciar",
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Reiniciar",
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                }
             }
         }
     }
