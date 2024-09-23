@@ -726,16 +726,20 @@ fun AlarmDetailScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Despertar", fontSize = 22.sp, color = Color.White) }, // Color blanco para el texto del título
+                title = { Text(text = "Despertar", fontSize = 22.sp, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack() // Regresa a la pantalla anterior
+                        navController.navigate("listOfAlarms") { // Especifica la ruta de la pantalla
+                            popUpTo("listOfAlarms") { inclusive = true } // Elimina las pantallas intermedias
+                        }
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Color blanco para el icono de regreso
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
+
                 },
-                backgroundColor = Color(0xFF006769), // Color verde oscuro para el fondo
-                contentColor = Color.White // Color del contenido
+                backgroundColor = Color(0xFF006769),
+                contentColor = Color.White,
+                modifier = Modifier.height(72.dp)
             )
         },
         bottomBar = { BottomNavigationBar(navController) }
@@ -747,22 +751,22 @@ fun AlarmDetailScreen() {
                 .padding(16.dp)
         ) {
             Row(
-                horizontalArrangement = Arrangement.End, // Botón alineado a la derecha
+                horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
                     onClick = { /* Acción de editar */ },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF006769), // Fondo del botón verde oscuro
-                        contentColor = Color.White // Color del texto e ícono
+                        containerColor = Color(0xFF006769),
+                        contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(50), // Bordes redondeados
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier
-                        .padding(top = 8.dp) // Padding para separarlo del contenido superior
+                        .padding(top = 8.dp)
                 ) {
                     Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White)
-                    Spacer(modifier = Modifier.width(4.dp)) // Espaciado entre el ícono y el texto
-                    Text("Editar", color = Color.White) // Texto en blanco
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Editar", color = Color.White)
                 }
             }
             // Hora
@@ -786,10 +790,10 @@ fun AlarmDetailScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.despertar), // Replace with the appropriate image
+                    painter = painterResource(id = R.drawable.despertar),
                     contentDescription = "Alarm Image",
                     modifier = Modifier
-                        .height(200.dp) // Imagen más grande
+                        .height(200.dp)
                         .width(180.dp)
                         .clip(RoundedCornerShape(12.dp))
                 )
@@ -824,14 +828,16 @@ fun AlarmDetailScreen() {
                 textAlign = TextAlign.Start
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Sección de opciones (Vibrar, Repetir, Clásico)
             AlarmOptionsSection()
 
-            Spacer(modifier = Modifier.height(40.dp))
-
-            // Botón de eliminar alineado a la izquierda
+            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
             Button(
                 onClick = {  },
@@ -855,45 +861,49 @@ fun AlarmDetailScreen() {
 
 @Composable
 fun AlarmOptionsSection() {
-    Column {
-        // Opción Vibrar (icono ajustado)
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = R.drawable.check), // Cambia el icono según tu recurso
+                painter = painterResource(id = R.drawable.check),
                 contentDescription = null,
                 tint = Color(0xFF292929),
-                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+                modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Spacer(modifier = Modifier.width(8.dp))
             Text("Vibrar", fontSize = 18.sp, color = Color(0xFF292929))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         // Opción Repetir (icono ajustado)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = R.drawable.check), // Cambia el icono según tu recurso
+                painter = painterResource(id = R.drawable.check),
                 contentDescription = null,
                 tint = Color(0xFF292929),
-                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+                modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Spacer(modifier = Modifier.width(8.dp))
             Text("Repetir", fontSize = 18.sp, color = Color(0xFF292929))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
-        // Opción Clásico (icono ajustado)
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = R.drawable.nota), // Cambia el icono según tu recurso
+                painter = painterResource(id = R.drawable.nota),
                 contentDescription = null,
                 tint = Color(0xFF292929),
-                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+                modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Spacer(modifier = Modifier.width(8.dp))
             Text("Clásico", fontSize = 18.sp, color = Color(0xFF292929))
         }
     }
 }
+
