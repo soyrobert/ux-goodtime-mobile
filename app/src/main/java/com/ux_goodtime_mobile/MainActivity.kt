@@ -59,6 +59,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.background
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
+
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -74,7 +80,8 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "home") {
                         composable("home") { HomeScreen(navController) }
                         composable("createAlarm") { CreateAlarmScreen(navController) }
-                        composable("listOfAlarms") { AlarmScreen() }
+                        composable("listOfAlarms") { AlarmScreen(navController) }
+                        composable("alarmDetail") { AlarmDetailScreen() }
                     }
                 }
             }
@@ -481,7 +488,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
             onClick = { /* Acción al presionar el botón */ },
             modifier = Modifier.align(Alignment.Start),
             colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF006769) // Color de fondo (#006769)
+                containerColor = Color(0xFF006769) // Color de fondo (#006769)
             ),
         ) {
             Text(text = "Seleccionar (Clasic)")
@@ -505,7 +512,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
                     .padding(16.dp),
                 singleLine = true,
 
-            )
+                )
             Text(
                 text = "La descripción le ayudará a recordar mejor el propósito de la alarma.",
                 fontSize = 12.sp,
@@ -539,7 +546,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
 
             Button(
                 onClick = {
-                          showDialog = true
+                    showDialog = true
                 },
                 colors = ButtonDefaults.run {
                     val buttonColors = buttonColors(Color(0xFF006769))
@@ -564,7 +571,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
                             "",
                             color = Color(0xFF006769)
                         )
-                            },
+                    },
                     text = {
                         Text(
                             text = "Alarma Agregada.",
@@ -590,7 +597,7 @@ fun AlarmOptions(navController: androidx.navigation.NavHostController) {
 
 
 @Composable
-fun AlarmScreen() {
+fun AlarmScreen(navController: androidx.navigation.NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -603,12 +610,12 @@ fun AlarmScreen() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp) // Espacio inferior del título
         )
-        AlarmList()
+        AlarmList(navController)
     }
 }
 
 @Composable
-fun AlarmList() {
+fun AlarmList(navController: androidx.navigation.NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -616,31 +623,35 @@ fun AlarmList() {
         AlarmItem(
             imageRes = R.drawable.image1, // Reemplazar por la imagen correcta
             title = "Despertar",
+            navController = navController,
             time = "06:00 AM"
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmItem(
             imageRes = R.drawable.image2, // Reemplazar por la imagen correcta
             title = "Preparar almuerzo",
+            navController = navController,
             time = "11:00 AM"
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmItem(
             imageRes = R.drawable.image3, // Reemplazar por la imagen correcta
             title = "Recoger a Felipe del jardín",
+            navController = navController,
             time = "02:00 PM"
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmItem(
             imageRes = R.drawable.image4, // Reemplazar por la imagen correcta
             title = "Reunión de proyecto",
+            navController = navController,
             time = "03:30 PM"
         )
     }
 }
 
 @Composable
-fun AlarmItem(imageRes: Int, title: String, time: String) {
+fun AlarmItem(imageRes: Int, title: String, time: String, navController: androidx.navigation.NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -686,13 +697,203 @@ fun AlarmItem(imageRes: Int, title: String, time: String) {
                     }
                 }
             }
-            IconButton(onClick = { /* Acción de ir a más detalles */ }) {
+            IconButton(onClick = { navController.navigate("alarmDetail") }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right), // Reemplazar con el icono correcto
                     contentDescription = null,
                     modifier = Modifier.size(24.dp) // Tamaño del icono ajustado
                 )
             }
+        }
+    }
+}
+
+// Detalle de alarma
+
+
+class AlarmDetailActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AlarmDetailScreen()
+        }
+    }
+}
+
+@Composable
+fun AlarmDetailScreen() {
+    val navController = rememberNavController()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Despertar", fontSize = 22.sp, color = Color.White) }, // Color blanco para el texto del título
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack() // Regresa a la pantalla anterior
+                    }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White) // Color blanco para el icono de regreso
+                    }
+                },
+                backgroundColor = Color(0xFF006769), // Color verde oscuro para el fondo
+                contentColor = Color.White // Color del contenido
+            )
+        },
+        bottomBar = { BottomNavigationBar(navController) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.End, // Botón alineado a la derecha
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = { /* Acción de editar */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006769), // Fondo del botón verde oscuro
+                        contentColor = Color.White // Color del texto e ícono
+                    ),
+                    shape = RoundedCornerShape(50), // Bordes redondeados
+                    modifier = Modifier
+                        .padding(top = 8.dp) // Padding para separarlo del contenido superior
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White)
+                    Spacer(modifier = Modifier.width(4.dp)) // Espaciado entre el ícono y el texto
+                    Text("Editar", color = Color.White) // Texto en blanco
+                }
+            }
+            // Hora
+            Text(
+                text = "Hora",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF292929),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = "06:00 PM",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color(0xFF292929)
+            )
+
+            // Imagen y título
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.despertar), // Replace with the appropriate image
+                    contentDescription = "Alarm Image",
+                    modifier = Modifier
+                        .height(200.dp) // Imagen más grande
+                        .width(180.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Despertar",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row {
+                        IconButton(onClick = { /* Acción compartir */ }) {
+                            Icon(Icons.Default.Share, contentDescription = "Compartir", tint = Color(0xFF292929)) // Icono de compartir
+                        }
+                        Text(
+                            text = "Compartir",
+                            fontSize = 14.sp,
+                            color = Color(0xFF006769)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Descripción
+            Text(
+                text = "A despertar! Vamos con Toda!!!",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Sección de opciones (Vibrar, Repetir, Clásico)
+            AlarmOptionsSection()
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Botón de eliminar alineado a la izquierda
+
+            Button(
+                onClick = {  },
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAB0130))
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.borrar),
+                    contentDescription = "Eliminar",
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Eliminar", color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun AlarmOptionsSection() {
+    Column {
+        // Opción Vibrar (icono ajustado)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.check), // Cambia el icono según tu recurso
+                contentDescription = null,
+                tint = Color(0xFF292929),
+                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Text("Vibrar", fontSize = 18.sp, color = Color(0xFF292929))
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Opción Repetir (icono ajustado)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.check), // Cambia el icono según tu recurso
+                contentDescription = null,
+                tint = Color(0xFF292929),
+                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Text("Repetir", fontSize = 18.sp, color = Color(0xFF292929))
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Opción Clásico (icono ajustado)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.nota), // Cambia el icono según tu recurso
+                contentDescription = null,
+                tint = Color(0xFF292929),
+                modifier = Modifier.size(24.dp) // Ajusta el tamaño del icono
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Espaciado entre el icono y el texto
+            Text("Clásico", fontSize = 18.sp, color = Color(0xFF292929))
         }
     }
 }
