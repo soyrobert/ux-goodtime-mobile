@@ -63,6 +63,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.foundation.background
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
@@ -1046,6 +1047,8 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
 
 @Composable
 fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -1070,7 +1073,7 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
             )
         },
         bottomBar = {
-
+            // Barra de navegación inferior
             BottomNavigation {
                 BottomNavigationItem(
                     icon = { Icon(Icons.Default.Settings, contentDescription = "Configuración") },
@@ -1182,7 +1185,9 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
 
                 // Botón de Reiniciar
                 Button(
-                    onClick = { /* Acción para reiniciar las estadísticas */ },
+                    onClick = {
+                        showDialog = true
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
@@ -1205,6 +1210,44 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
                 }
             }
         }
+
+        // Modal que aparece cuando se reinician las estadísticas
+        if (showDialog) {
+            ReiniciarEstadisticasDialog {
+                showDialog = false
+            }
+        }
     }
 }
+
+@Composable
+fun ReiniciarEstadisticasDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = null,
+        text = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Estadísticas reiniciadas",
+                    color = Color(0xFF006769),
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        },
+        buttons = {},
+        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+    )
+
+    // LaunchedEffect para cerrar el diálogo
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(3000)
+        onDismiss()
+    }
+}
+
 
