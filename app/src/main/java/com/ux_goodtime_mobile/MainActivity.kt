@@ -62,6 +62,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.material.TopAppBar
 import androidx.compose.foundation.background
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
                         composable("createAlarm") { CreateAlarmScreen(navController) }
                         composable("listOfAlarms") { AlarmScreen(navController) }
                         composable("alarmDetail") { AlarmDetailScreen() }
+                        composable("historyStatistics") { HistoryStatisticsScreen(navController) }
                     }
                 }
             }
@@ -108,7 +110,9 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
             icon = { Icon(Icons.Default.Notifications, contentDescription = "Estadísticas") },
             label = { Text("Estadísticas") },
             selected = false,
-            onClick = { /* Acción de navegación */ },
+            onClick = {
+                navController.navigate("historyStatistics")
+            },
             selectedContentColor = Color.White,
             unselectedContentColor = Color.LightGray
         )
@@ -903,6 +907,132 @@ fun AlarmOptionsSection() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Clásico", fontSize = 18.sp, color = Color(0xFF292929))
+        }
+    }
+}
+
+// ***********************************************************
+// Diseño de la pantalla de estadisticas
+// ***********************************************************
+
+@Composable
+fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Historial y estadísticas",
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Regresar",
+                            tint = Color.White
+                        )
+                    }
+                },
+                backgroundColor = Color(0xFF006769) // Color personalizado de la barra superior
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp), // Añade un padding para los componentes internos
+            verticalArrangement = Arrangement.SpaceBetween // Posiciona los componentes, dejando espacio entre ellos
+        ) {
+            Column {
+                // History Button
+                Button(
+                    onClick = { /* Acción para navegar al historial */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .height(60.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006769) // Color de fondo
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Historial",
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "Historial",
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                // Statistics Button
+                Button(
+                    onClick = { /* Acción para navegar a las estadísticas */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .height(60.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006769) // Color de fondo
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Estadísticas",
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "Estadísticas",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+
+            // Cancel Button at the bottom
+            Button(
+                onClick = { navController.navigateUp() },
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .align(Alignment.CenterHorizontally) // Alinea el botón al centro horizontal
+                    .padding(vertical = 24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF006769)
+                ),
+                shape = RoundedCornerShape(50) // Esquinas redondeadas
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack, // Icono de flecha atrás
+                    contentDescription = "Cancelar",
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp)) // Espacio entre el icono y el texto
+                Text(
+                    text = "Cancelar",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
