@@ -97,17 +97,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
 
-    BottomNavigation (
-        backgroundColor = Color(0xFF006769), // Color de fondo personalizado (verde oscuro)
-        contentColor = Color.White           // Color del contenido (íconos y texto)
-    ){
+    BottomNavigation(
+        backgroundColor = Color(0xFF006769),
+        contentColor = Color.White,
+        modifier = Modifier.navigationBarsPadding().height(76.dp)
+
+
+    ) {
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Configuración") },
-            label = { Text("Configuración") },
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Ajustes") },
+            label = { Text("Ajustes") },
             selected = false,
             onClick = { /* Acción de navegación */ },
             selectedContentColor = Color.White,
-            unselectedContentColor = Color.LightGray
+            unselectedContentColor = Color.LightGray,
         )
         BottomNavigationItem(
             icon = { Icon(Icons.Default.Notifications, contentDescription = "Estadísticas") },
@@ -131,6 +134,7 @@ fun BottomNavigationBar(navController: androidx.navigation.NavHostController) {
         )
     }
 }
+
 
 
 @Composable
@@ -940,7 +944,9 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
                     }
                 },
                 backgroundColor = Color(0xFF006769),
-                modifier = Modifier.height(72.dp)
+                modifier = Modifier
+                    .height(92.dp)
+                    .statusBarsPadding()
             )
         }
     ) { paddingValues ->
@@ -948,7 +954,8 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp)
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -1041,6 +1048,8 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
     }
 }
 
+
+
 // ***********************************************************
 // Diseño pantalla estadisticas
 // ***********************************************************
@@ -1069,7 +1078,9 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
                     }
                 },
                 backgroundColor = Color(0xFF006769),
-                modifier = Modifier.height(72.dp)
+                modifier = Modifier
+                    .height(92.dp)
+                    .statusBarsPadding()
             )
         },
         bottomBar = {
@@ -1100,7 +1111,8 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp)
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
