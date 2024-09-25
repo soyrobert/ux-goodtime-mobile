@@ -737,12 +737,10 @@ fun AlarmDetailScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Despertar", fontSize = 22.sp, color = Color.White) },
+                title = { Text(text = "Reunión de proyecto", fontSize = 22.sp, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.navigate("listOfAlarms") { // Especifica la ruta de la pantalla
-                            popUpTo("listOfAlarms") { inclusive = true } // Elimina las pantallas intermedias
-                        }
+                        navController.popBackStack()
                     }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
@@ -750,7 +748,9 @@ fun AlarmDetailScreen() {
                 },
                 backgroundColor = Color(0xFF006769),
                 contentColor = Color.White,
-                modifier = Modifier.height(72.dp)
+                modifier = Modifier
+                    .height(92.dp)
+                    .statusBarsPadding()
             )
         },
         bottomBar = { BottomNavigationBar(navController) }
@@ -784,12 +784,12 @@ fun AlarmDetailScreen() {
             Text(
                 text = "Hora",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 color = Color(0xFF292929),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "06:00 PM",
+                text = "04:00 PM",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xFF292929)
@@ -801,7 +801,7 @@ fun AlarmDetailScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.despertar),
+                    painter = painterResource(id = R.drawable.reunion),
                     contentDescription = "Alarm Image",
                     modifier = Modifier
                         .height(200.dp)
@@ -811,19 +811,22 @@ fun AlarmDetailScreen() {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Despertar",
+                        text = "Reunión de proyecto",
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Normal
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         IconButton(onClick = { /* Acción compartir */ }) {
-                            Icon(Icons.Default.Share, contentDescription = "Compartir", tint = Color(0xFF292929)) // Icono de compartir
+                            Icon(Icons.Default.Share, contentDescription = "Compartir", tint = Color(0xFF292929))
                         }
                         Text(
                             text = "Compartir",
                             fontSize = 14.sp,
-                            color = Color(0xFF006769)
+                            color = Color(0xFF006769),
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
                 }
@@ -833,7 +836,7 @@ fun AlarmDetailScreen() {
 
             // Descripción
             Text(
-                text = "A despertar! Vamos con Toda!!!",
+                text = "Preparar presentación sobre el avance del proyecto para la reunión de mañana, incluir gráficos y estadísticas.",
                 fontSize = 16.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Start
