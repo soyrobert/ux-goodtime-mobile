@@ -7,6 +7,10 @@
 ## Descripción
 Aplicación movil para crear alarmas efectivas y personalizadas.
 
+## Dispositivios donde probamos la App
+- Pixel 3a (Emulador) con version Android: Vanilla Ice Cream
+- Samsung Galaxy A22 (Fisico) con versión Android: Android 13 (Tiramisu)
+
 ## Instrucciones para tutores
 A continuación encontrará los pasos para ejecutar la aplicación en su entrono local.
 
