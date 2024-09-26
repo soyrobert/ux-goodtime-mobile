@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                         composable("home") { HomeScreen(navController) }
                         composable("createAlarm") { CreateAlarmScreen(navController) }
                         composable("listOfAlarms") { AlarmScreen(navController) }
-                        composable("alarmDetail") { AlarmDetailScreen() }
+                        composable("alarmDetail") { AlarmDetailScreen(navController) }
                         composable("historyStatistics") { HistoryStatisticsScreen(navController) }
                         composable("statistics") { StatisticsScreen(navController) }
                     }
@@ -726,14 +726,15 @@ class AlarmDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AlarmDetailScreen()
+            val navController = rememberNavController()
+            AlarmDetailScreen(navController = navController)
         }
     }
 }
 
 @Composable
-fun AlarmDetailScreen() {
-    val navController = rememberNavController()
+fun AlarmDetailScreen(navController: androidx.navigation.NavHostController) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -796,7 +797,7 @@ fun AlarmDetailScreen() {
             )
 
             // Imagen y título
-            Spacer(modifier = Modifier.height(16.dp))
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -832,7 +833,6 @@ fun AlarmDetailScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
             // Descripción
             Text(
@@ -842,32 +842,35 @@ fun AlarmDetailScreen() {
                 textAlign = TextAlign.Start
             )
 
-
             Spacer(modifier = Modifier.height(16.dp))
             Spacer(modifier = Modifier.height(16.dp))
 
             // Sección de opciones (Vibrar, Repetir, Clásico)
             AlarmOptionsSection()
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Spacer(modifier = Modifier.height(16.dp))
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Button(
-                onClick = {  },
+                onClick = { /* Acción de eliminar */ },
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAB0130))
+                    .width(180.dp) 
+                    .height(60.dp) 
+                    .padding(top = 16.dp, start = 0.dp), 
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAB0130)), 
+                shape = RoundedCornerShape(50)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.borrar),
                     contentDescription = "Eliminar",
                     tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Eliminar", color = Color.White)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Eliminar",
+                    color = Color.White,
+                    fontSize = 14.sp 
+                )
             }
         }
     }
@@ -1029,7 +1032,9 @@ fun HistoryStatisticsScreen(navController: androidx.navigation.NavHostController
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
                     .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 24.dp),
+                    .padding(vertical = 24.dp)
+                    .padding(bottom = 40.dp)
+                    .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF006769)
                 ),
@@ -1086,29 +1091,7 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
                     .statusBarsPadding()
             )
         },
-        bottomBar = {
-            // Barra de navegación inferior
-            BottomNavigation {
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Configuración") },
-                    label = { Text("Configuración") },
-                    selected = false,
-                    onClick = { /* Acción */ }
-                )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Estadísticas") },
-                    label = { Text("Estadísticas") },
-                    selected = true,
-                    onClick = { /* Acción */ }
-                )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Alarmas") },
-                    label = { Text("Alarmas") },
-                    selected = false,
-                    onClick = { /* Acción */ }
-                )
-            }
-        }
+ 
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -1169,7 +1152,8 @@ fun StatisticsScreen(navController: androidx.navigation.NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(vertical = 24.dp)
+                    .padding(bottom = 40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 // Botón de Salir
